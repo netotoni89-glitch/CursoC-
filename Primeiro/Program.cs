@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.IO;
+using System.Reflection.Metadata;
+using System.Threading.Channels;
 
 namespace Primeiro
 {
@@ -7,70 +9,98 @@ namespace Primeiro
     {
         static void Main()
         {
-            bool varContinue = true;
-            while (varContinue)
+            //1. Estrutura
+            string path = @"""\""";
+            string fileName = "shooping_list.text";
+            string filePath = path + fileName;
+
+            List<string> shoopingList = new List<string>();
+
+            //Lógica
+
+            if (File.Exists(filePath))
             {
+                shoopingList.AddRange(File.ReadLines(filePath));
+            }
 
-                Console.WriteLine("==========Calcuculadora Simples============ \n");
-                Console.WriteLine("Digite o primeiro numero:");
-                double num1 = Convert.ToDouble(Console.ReadLine());
-                Console.WriteLine("Digite o segundo numero:");
-                double num2 = Convert.ToDouble(Console.ReadLine());
+            while (true)
+            {
+                Console.WriteLine("\n=== Lista de Compras ===");
+                Console.WriteLine("1, Adicionar item");
+                Console.WriteLine("2. Remover item");
+                Console.WriteLine("3. Exibir Lista");
+                Console.WriteLine("4. Sair");
+                Console.WriteLine("Escolha um numero para continuar:");
 
-                Console.WriteLine("Escolha uma operaçao:");
-                Console.WriteLine("1. Adicao (+)");
-                Console.WriteLine("2. Subtracao (-)");
-                Console.WriteLine("3. Multiplicaçao (*)");
-                Console.WriteLine("4. Divisao (*)");
-                Console.WriteLine("Digite o numero da operacao: ");
-                int operation = Convert.ToInt32(Console.ReadLine());
+                String choiceUser = Console.ReadLine();
 
-                double result = 0;
-
-                //Condiçoes
-
-                if (operation == 1)
+                switch (choiceUser)
                 {
-                    result = num1 + num2;
-                }
-                else if (operation == 2)
-                {
-                    result = num1 - num2;
-                }
-                else if (operation == 3)
-                {
-                    result = num1 * num2;
-                }
-                else if (operation == 4)
-                {
-                    if (num2 != 0)
-                    {
-                        result = num1 / num2;
+                    case "1":
+                        Console.WriteLine("Digite o nome do item para adicionar:");
+                        string itemInsert = Console.ReadLine();
 
-                    }
-                    else
-                    {
-                        Console.WriteLine("Erro:Nao  e possivel dividir um numero por 0");
-                    }
 
-                }
-                else
-                {
-                    Console.WriteLine("Oprecao invalida");
-                }
+                        if (!string.IsNullOrEmpty(itemInsert))
+                        {
+                            shoopingList.Add(itemInsert);
+                            Console.WriteLine($"Item'{itemInsert}' adicionado com sucesso!");
+                        }
 
-                Console.WriteLine("Resultado:" + result + "\n");
+                        else
+                        {
+                            Console.WriteLine("O item nao pode ser vazio!");
+                        }
+                        break;
 
-                Console.WriteLine("\n Deseja realizar outra operacao (s/n) ?");
-                string response = Console.ReadLine();
+                    case "2":
+                        Console.WriteLine("Digite o nome do item para remover:");
+                        string itemRemove = Console.ReadLine();
 
-                if (response != "s")
-                {
-                    varContinue = false;
+                        var test = (shoopingList.Remove(itemRemove));
+                        if (shoopingList.Remove(itemRemove))
+                        {
+                            Console.WriteLine($"Item '{itemRemove}' removido com sucesso!");
+                        }                       
+
+
+                        break;
+
+                    case "3":
+                        Console.WriteLine("\n Itens na sua lista de Compras:");
+                        if (shoopingList.Count == 0)
+                        {
+                            Console.WriteLine("Sua lista  está vazia.");
+                        }
+                        else
+                        {
+                            for (int i =0; i<shoopingList.Count; i++)
+                            {
+                                Console.WriteLine($"{i + 1}. {shoopingList[i]}");
+                            }                    
+                        }
+                    break;
+
+                        case "4":
+                             File.WriteAllLines(filePath, shoopingList);
+                        Console.WriteLine("Lista salva! Saindo...");
+                        return;
+
+                    default:
+                        Console.WriteLine("Opçao Invalida. Tente novamente");
+                    break;
+
+
                 }
             }
-            Console.WriteLine("Obrigado por utilizar a calculadora!");
+
         }
     }
+
 }
-   
+
+
+
+
+
+
